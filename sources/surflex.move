@@ -2,6 +2,7 @@ module surflex::surflex {
 
     use sui::object::UID;
     use sui::tx_context::TxContext;
+    use sui::balance::{Self, Balance};
     use sui::coin::Coin;
     use sui::sui::SUI;
     use sui::event;
@@ -15,34 +16,40 @@ module surflex::surflex {
     /// The single global pool.
     public struct StakingInfo has key, store {
         id: UID,
-        treasury: Coin<SUI>,
+        treasury: Balance<SUI>,
         staked_amount: u64,
     }
 
-    /// One‑time initializer — deployer runs this once to bootstrap the shared pool.
-    public entry fun init_pool(initial_coin: Coin<SUI>, ctx: &mut TxContext) {
-        let amount = sui::coin::value(&initial_coin);
+    // / One‑time initializer — deployer runs this once to bootstrap the shared pool.
+    public entry fun init_pool(seed_coin: Coin<SUI>, ctx: &mut TxContext) {
+        // let mut bal = balance::Balance<SUI>(0);
+        let seed_balance = sui::coin::into_balance(seed_coin);
+        let seed_val = balance::value(&seed_balance);
 
         let pool = StakingInfo {
-            id: sui::object::new(ctx),
-            treasury: initial_coin,
-            staked_amount: amount,
+            id: object::new(ctx),
+            treasury: seed_balance,
+            staked_amount: seed_val,
         };
-
-        sui::transfer::share_object(pool);
+        transfer::share_object(pool);
     }
 
-    /// Stake SUI into the shared pool.
-    public entry fun stake(pool: &mut StakingInfo, deposit: Coin<SUI>, ctx: &mut TxContext) {
-        let amount = sui::coin::value(&deposit);
+    // / Stake SUI into the shared pool.
+    public entry fun stake_amount(
+        pool: &mut StakingInfo,
+        mut payment_coin: Coin<SUI>,
+        amount: u64,
+        ctx: &mut TxContext,
+    ) {
+        let stake_part = sui::coin::split(&mut payment_coin, amount, ctx);
 
-        sui::coin::join(&mut pool.treasury, deposit);
+        let stake_balance = sui::coin::into_balance(stake_part);
+        balance::join(&mut pool.treasury, stake_balance);
         pool.staked_amount = pool.staked_amount + amount;
 
-        event::emit<StakeEvent>(StakeEvent {
-            amount,
-            sender: sui::tx_context::sender(ctx),
-        });
+        event::emit<StakeEvent>(StakeEvent { amount, sender: tx_context::sender(ctx) });
+
+        transfer::public_transfer(payment_coin, tx_context::sender(ctx));
     }
 
     public fun get_total(pool: &StakingInfo): u64 {
