@@ -18,7 +18,7 @@ edition = "2024.beta" # edition = "legacy" to use legacy (pre-2024) Move
 # Override = { local = "../conflicting/version", override = true }
 
 [addresses]
-surflex = "0x59275d4cdd158aa2b28ccaeac416fbc10a11786271473e651168f1b489f84dd9"
+surflex = "0xb0b3b4ba254802a811b3c6cf42a7c84fe052049e6863a763f9256b2cacc4f61d"
 
 # Named addresses will be accessible in Move as `@name`. They're also exported:
 # for example, `std = "0x1"` is exported by the Standard Library.

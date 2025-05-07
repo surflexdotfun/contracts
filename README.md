@@ -4,7 +4,7 @@
 >
 > | Package ID                                                                                                                                                                    | Shared Pool Object ID                                                |
 > | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-> | [`0x59275d4cdd158aa2b28ccaeac416fbc10a11786271473e651168f1b489f84dd9`](https://suiscan.xyz/testnet/object/0x59275d4cdd158aa2b28ccaeac416fbc10a11786271473e651168f1b489f84dd9) | [`0xf73e718ec1e4f3a2589d0cdcab6696f69b86dbedaa902c7d82b965e9ee534f98`](https://suiscan.xyz/testnet/object/0xf73e718ec1e4f3a2589d0cdcab6696f69b86dbedaa902c7d82b965e9ee534f98) |
+> | [`0xb0b3b4ba254802a811b3c6cf42a7c84fe052049e6863a763f9256b2cacc4f61d`](https://suiscan.xyz/testnet/object/0xb0b3b4ba254802a811b3c6cf42a7c84fe052049e6863a763f9256b2cacc4f61d) | [`0x53cb0fff0b93acc58151794f5cb06b0739b6a14e6a6f8d159395c2eda2911bcc`](https://suiscan.xyz/testnet/object/0x53cb0fff0b93acc58151794f5cb06b0739b6a14e6a6f8d159395c2eda2911bcc) |
 
 ---
 
@@ -55,7 +55,7 @@ GAS=0x<ANOTHER_COIN>
 
 sui client call \
   --env testnet \
-  --package 0x59275d4cdd158aa2b28ccaeac416fbc10a11786271473e651168f1b489f84dd9 \
+  --package 0xb0b3b4ba254802a811b3c6cf42a7c84fe052049e6863a763f9256b2cacc4f61d \
   --module  surflex \
   --function init_pool \
   --args    $INITIAL \
@@ -68,17 +68,16 @@ If the pool already exists you can skip this step; otherwise, `effects.created` 
 ### 3. Stake SUI
 
 ```bash
-POOL=0x59275d4cdd158aa2b28ccaeac416fbc10a11786271473e651168f1b489f84dd9
+POOL=0xb0b3b4ba254802a811b3c6cf42a7c84fe052049e6863a763f9256b2cacc4f61d
 DEPOSIT=0x<YOUR_DEPOSIT_COIN>
 GAS=0x<ANOTHER_COIN>
-AMOUNT=10
 
 sui client call \
   --env testnet \
-  --package 0x59275d4cdd158aa2b28ccaeac416fbc10a11786271473e651168f1b489f84dd9 \
+  --package 0xb0b3b4ba254802a811b3c6cf42a7c84fe052049e6863a763f9256b2cacc4f61d \
   --module  surflex \
   --function stake_amount \
-  --args    0xf73e718ec1e4f3a2589d0cdcab6696f69b86dbedaa902c7d82b965e9ee534f98 $DEPOSIT $AMOUNT \
+  --args    0x53cb0fff0b93acc58151794f5cb06b0739b6a14e6a6f8d159395c2eda2911bcc $DEPOSIT \
   --gas-object $GAS \
   --gas-budget 50000000
 ```
@@ -93,5 +92,5 @@ sui client object --env testnet --id $POOL | jq '.data.content.fields.staked_amo
 
 # Real‑time event stream
 sui client events --env testnet \
-  --query MoveEventType=0x59275d4cdd158aa2b28ccaeac416fbc10a11786271473e651168f1b489f84dd9::surflex::StakeEvent
+  --query MoveEventType=0xb0b3b4ba254802a811b3c6cf42a7c84fe052049e6863a763f9256b2cacc4f61d::surflex::StakeEvent
 ```
